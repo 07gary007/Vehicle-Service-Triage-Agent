@@ -1,0 +1,47 @@
+[
+  {
+    "name": "civic_brake_abs",
+    "vehicle": {"year": 2021, "make": "Honda", "model": "Civic", "vehicle_id": "HC-2021-001"},
+    "mileage": 52100,
+    "customer_complaint": "Grinding noise when braking and the ABS light came on yesterday.",
+    "service_advisor_notes": "Customer says braking feel may be slightly different.",
+    "expected_risk": "safety_review",
+    "expected_tools": ["search_recalls", "search_technical_bulletins", "get_service_history"]
+  },
+  {
+    "name": "rav4_brake_vibration",
+    "vehicle": {"year": 2022, "make": "Toyota", "model": "RAV4", "vehicle_id": "TR-2022-002"},
+    "mileage": 35500,
+    "customer_complaint": "The steering wheel shakes when I brake from highway speed.",
+    "service_advisor_notes": "",
+    "expected_risk": "safety_review",
+    "expected_tools": ["search_recalls", "search_technical_bulletins", "get_service_history"]
+  },
+  {
+    "name": "civic_infotainment",
+    "vehicle": {"year": 2022, "make": "Honda", "model": "Civic", "vehicle_id": "HC-2022-002"},
+    "mileage": 30100,
+    "customer_complaint": "The center display reboots randomly and Bluetooth disconnects.",
+    "service_advisor_notes": "Happened three times this week.",
+    "expected_risk": "routine",
+    "expected_tools": ["search_technical_bulletins", "get_service_history"]
+  },
+  {
+    "name": "rav4_overheat",
+    "vehicle": {"year": 2020, "make": "Toyota", "model": "RAV4", "vehicle_id": "TR-2020-004"},
+    "mileage": 79500,
+    "customer_complaint": "Temperature gauge went above normal and I smelled something hot after driving.",
+    "service_advisor_notes": "Vehicle is parked at the dealership now.",
+    "expected_risk": "safety_review",
+    "expected_tools": ["search_recalls", "search_technical_bulletins", "get_service_history"]
+  },
+  {
+    "name": "civic_ac",
+    "vehicle": {"year": 2023, "make": "Honda", "model": "Civic", "vehicle_id": "HC-2023-003"},
+    "mileage": 24500,
+    "customer_complaint": "The air conditioner takes a long time to get cold on hot days.",
+    "service_advisor_notes": "No warning lights.",
+    "expected_risk": "routine",
+    "expected_tools": ["search_technical_bulletins", "get_service_history"]
+  }
+]
