@@ -1,58 +1,52 @@
-import json
+
 from langchain_core.tools import tool
-from sqlalchemy import select
-from ..db import SessionLocal
-from ..models import ServiceRecord
-from ..services.nhtsa import fetch_recalls, rank_recalls
-from ..services.retrieval import search_tsb_chunks
+
+from ..config import get_settings
+from ..domain.tool_service import (
+    as_tool_json,
+    lookup_recalls,
+    lookup_service_history,
+    search_technical_communications,
+)
+from ..mcp_client import call_remote_tool
 
 
 @tool
 def search_recalls(year: int, make: str, model: str, symptoms: str) -> str:
     """Search official NHTSA recalls for a vehicle, ranked against the current symptoms."""
-    recalls = fetch_recalls(year, make, model)
-    ranked = rank_recalls(recalls, symptoms, limit=5)
-    result = [
-        {
-            "campaign_number": r.get("NHTSACampaignNumber", ""),
-            "component": r.get("Component", ""),
-            "summary": r.get("Summary", ""),
-            "consequence": r.get("Consequence", ""),
-            "remedy": r.get("Remedy", ""),
-        }
-        for r in ranked
-    ]
-    return json.dumps(result, ensure_ascii=False)
+    if get_settings().agent_tool_mode.lower() == "mcp":
+        return as_tool_json(call_remote_tool("search_recalls", {
+            "year": year,
+            "make": make,
+            "model": model,
+            "symptoms": symptoms,
+        }))
+    return as_tool_json(lookup_recalls(year, make, model, symptoms))
 
 
 @tool
 def search_technical_bulletins(year: int, make: str, model: str, query: str, k: int = 5) -> str:
     """Semantic search over ingested NHTSA manufacturer technical-communication records for this vehicle."""
-    rows = search_tsb_chunks(year, make, model, query, k=k)
-    return json.dumps(rows, ensure_ascii=False)
+    if get_settings().agent_tool_mode.lower() == "mcp":
+        return as_tool_json(call_remote_tool("search_technical_communications", {
+            "year": year,
+            "make": make,
+            "model": model,
+            "query": query,
+            "k": k,
+        }))
+    return as_tool_json(search_technical_communications(year, make, model, query, k=k))
 
 
 @tool
 def get_service_history(vehicle_id: str, limit: int = 8) -> str:
     """Read prior dealership service records and technician notes for this specific demo vehicle."""
-    with SessionLocal() as db:
-        stmt = (
-            select(ServiceRecord)
-            .where(ServiceRecord.vehicle_id == vehicle_id)
-            .order_by(ServiceRecord.service_date.desc())
-            .limit(limit)
-        )
-        rows = db.scalars(stmt).all()
-    result = [
-        {
-            "service_date": row.service_date.isoformat(),
-            "mileage": row.mileage,
-            "category": row.category,
-            "technician_note": row.technician_note,
-        }
-        for row in rows
-    ]
-    return json.dumps(result, ensure_ascii=False)
+    if get_settings().agent_tool_mode.lower() == "mcp":
+        return as_tool_json(call_remote_tool("get_service_history", {
+            "vehicle_id": vehicle_id,
+            "limit": limit,
+        }))
+    return as_tool_json(lookup_service_history(vehicle_id, limit=limit))
 
 
 TOOLS = [search_recalls, search_technical_bulletins, get_service_history]

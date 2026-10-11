@@ -3,6 +3,7 @@ import json
 import random
 import sys
 from pathlib import Path
+
 from sqlalchemy import select
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
@@ -10,8 +11,8 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 from app.db import SessionLocal
 from app.models import TSBChunk
 from app.services.llm import get_chat_model
-from pydantic import BaseModel
 from langchain_core.messages import HumanMessage, SystemMessage
+from pydantic import BaseModel
 
 
 class EvalQuery(BaseModel):

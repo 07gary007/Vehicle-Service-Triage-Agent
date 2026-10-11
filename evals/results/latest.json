@@ -1,0 +1,126 @@
+{
+  "metrics": {
+    "cases": 5,
+    "completed_cases": 5,
+    "failed_cases": 0,
+    "risk_accuracy": 1.0,
+    "human_review_accuracy": 1.0,
+    "tool_coverage": 1.0,
+    "output_completeness": 1.0,
+    "safety_review_recall": 1.0
+  },
+  "cases": [
+    {
+      "name": "civic_brake_abs",
+      "risk_correct": true,
+      "expected_risk": "safety_review",
+      "actual_risk": "safety_review",
+      "human_review_correct": true,
+      "expected_human_review": true,
+      "actual_human_review": true,
+      "tool_coverage": true,
+      "expected_tools": [
+        "get_service_history",
+        "search_recalls",
+        "search_technical_bulletins"
+      ],
+      "actual_tools": [
+        "get_service_history",
+        "search_recalls",
+        "search_technical_bulletins"
+      ],
+      "complete_output": true,
+      "evidence_count": 7,
+      "run_id": "f2374067-995f-431d-afc4-70fc8c0d3b1c"
+    },
+    {
+      "name": "rav4_brake_vibration",
+      "risk_correct": true,
+      "expected_risk": "safety_review",
+      "actual_risk": "safety_review",
+      "human_review_correct": true,
+      "expected_human_review": true,
+      "actual_human_review": true,
+      "tool_coverage": true,
+      "expected_tools": [
+        "get_service_history",
+        "search_recalls",
+        "search_technical_bulletins"
+      ],
+      "actual_tools": [
+        "get_service_history",
+        "search_recalls",
+        "search_technical_bulletins"
+      ],
+      "complete_output": true,
+      "evidence_count": 3,
+      "run_id": "4a9614b3-b793-4cf0-8801-180bcaa8e6e5"
+    },
+    {
+      "name": "civic_infotainment",
+      "risk_correct": true,
+      "expected_risk": "routine",
+      "actual_risk": "routine",
+      "human_review_correct": true,
+      "expected_human_review": true,
+      "actual_human_review": true,
+      "tool_coverage": true,
+      "expected_tools": [
+        "get_service_history",
+        "search_technical_bulletins"
+      ],
+      "actual_tools": [
+        "get_service_history",
+        "search_technical_bulletins"
+      ],
+      "complete_output": true,
+      "evidence_count": 7,
+      "run_id": "3a8655bd-f4c8-437c-93ef-83a9f5090e54"
+    },
+    {
+      "name": "rav4_overheat",
+      "risk_correct": true,
+      "expected_risk": "safety_review",
+      "actual_risk": "safety_review",
+      "human_review_correct": true,
+      "expected_human_review": true,
+      "actual_human_review": true,
+      "tool_coverage": true,
+      "expected_tools": [
+        "get_service_history",
+        "search_recalls",
+        "search_technical_bulletins"
+      ],
+      "actual_tools": [
+        "get_service_history",
+        "search_recalls",
+        "search_technical_bulletins"
+      ],
+      "complete_output": true,
+      "evidence_count": 8,
+      "run_id": "e6025483-4162-4e3b-8a1f-cce9809e93f7"
+    },
+    {
+      "name": "civic_ac",
+      "risk_correct": true,
+      "expected_risk": "routine",
+      "actual_risk": "routine",
+      "human_review_correct": true,
+      "expected_human_review": false,
+      "actual_human_review": false,
+      "tool_coverage": true,
+      "expected_tools": [
+        "get_service_history",
+        "search_technical_bulletins"
+      ],
+      "actual_tools": [
+        "get_service_history",
+        "search_technical_bulletins"
+      ],
+      "complete_output": true,
+      "evidence_count": 2,
+      "run_id": "11108f02-89d8-40a1-ab69-1aa3dd068c42"
+    }
+  ],
+  "failures": []
+}

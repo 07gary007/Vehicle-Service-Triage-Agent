@@ -1,4 +1,6 @@
-from typing import Literal
+from datetime import datetime
+from typing import Any, Literal
+
 from pydantic import BaseModel, Field
 
 RiskLevel = Literal["routine", "priority", "safety_review"]
@@ -33,8 +35,25 @@ class FinalNarrative(BaseModel):
     draft_work_order: str
 
 
+class EvidenceItem(BaseModel):
+    source_type: str
+    source_id: str
+    source_url: str | None = None
+    title: str | None = None
+    section: str | None = None
+    snippet: str
+    confidence: float | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class ApprovalRequest(BaseModel):
     work_order: str
+    reviewer_id: str = Field(default="local-advisor", min_length=1, max_length=128)
+
+
+class RejectionRequest(BaseModel):
+    reviewer_id: str = Field(default="local-advisor", min_length=1, max_length=128)
+    reason: str = Field(min_length=3, max_length=2000)
 
 
 class TSBSearchRequest(BaseModel):
@@ -43,3 +62,13 @@ class TSBSearchRequest(BaseModel):
     model: str
     query: str
     k: int = Field(default=5, ge=1, le=10)
+
+
+class TriageRunStatus(BaseModel):
+    run_id: str
+    status: str
+    risk_level: RiskLevel | None = None
+    result: dict[str, Any] | None = None
+    error: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None

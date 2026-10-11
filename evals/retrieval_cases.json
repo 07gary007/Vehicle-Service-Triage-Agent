@@ -1,0 +1,65 @@
+[
+  {
+    "year": 2022,
+    "make": "Honda",
+    "model": "Civic",
+    "query": "A buzz or ticking sound is heard from the center display.",
+    "expected_document_id": "10200395"
+  },
+  {
+    "year": 2022,
+    "make": "Honda",
+    "model": "Civic",
+    "query": "A gap between the center display unit and dashboard causes vibration.",
+    "expected_document_id": "10211106"
+  },
+  {
+    "year": 2021,
+    "make": "Toyota",
+    "model": "RAV4",
+    "query": "Tires should remain in the same position and direction of rotation after wheels are replaced.",
+    "expected_document_id": "10178527"
+  },
+  {
+    "year": 2021,
+    "make": "Toyota",
+    "model": "RAV4",
+    "query": "Parking brake malfunction warning with DTC C059746 in the brake system control module.",
+    "expected_document_id": "10234300"
+  },
+  {
+    "year": 2020,
+    "make": "Toyota",
+    "model": "RAV4",
+    "query": "Coolant leak from the electric water pump body or electrical connector with DTC P26CB71.",
+    "expected_document_id": "10176705"
+  },
+  {
+    "year": 2020,
+    "make": "Honda",
+    "model": "Civic",
+    "query": "Clutch judder when taking off below 1000 RPM.",
+    "expected_document_id": "10170614"
+  },
+  {
+    "year": 2021,
+    "make": "Toyota",
+    "model": "RAV4",
+    "query": "RAV4 Prime climate control does not cool or heat and the battery cooling system reports a refrigerant leak.",
+    "expected_document_id": "10230365"
+  },
+  {
+    "year": 2022,
+    "make": "Honda",
+    "model": "Civic",
+    "query": "The multi-purpose camera can cause cruise control and adaptive cruise control to stop working, sometimes with beeping.",
+    "expected_document_id": "10232100"
+  },
+  {
+    "year": 2023,
+    "make": "Honda",
+    "model": "Civic",
+    "query": "A/C takes a long time to get cold on hot days with no warning lights.",
+    "expected_no_match": true
+  }
+]
