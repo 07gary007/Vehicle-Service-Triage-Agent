@@ -1,0 +1,105 @@
+{
+  "metrics": {
+    "cases": 9,
+    "passed": 9,
+    "accuracy_at_5": 1.0,
+    "no_match_cases": 1
+  },
+  "cases": [
+    {
+      "query": "A buzz or ticking sound is heard from the center display.",
+      "expected": "10200395",
+      "actual_document_ids": [
+        "10208843",
+        "10200395",
+        "10211106",
+        "10232100"
+      ],
+      "passed": true
+    },
+    {
+      "query": "A gap between the center display unit and dashboard causes vibration.",
+      "expected": "10211106",
+      "actual_document_ids": [
+        "10211106",
+        "10200395",
+        "10208843"
+      ],
+      "passed": true
+    },
+    {
+      "query": "Tires should remain in the same position and direction of rotation after wheels are replaced.",
+      "expected": "10178527",
+      "actual_document_ids": [
+        "10183283",
+        "10178527",
+        "10198154"
+      ],
+      "passed": true
+    },
+    {
+      "query": "Parking brake malfunction warning with DTC C059746 in the brake system control module.",
+      "expected": "10234300",
+      "actual_document_ids": [
+        "10234347",
+        "10234300",
+        "10184549",
+        "10230365",
+        "10203539"
+      ],
+      "passed": true
+    },
+    {
+      "query": "Coolant leak from the electric water pump body or electrical connector with DTC P26CB71.",
+      "expected": "10176705",
+      "actual_document_ids": [
+        "10176705",
+        "10171695",
+        "10170728",
+        "10172858",
+        "10172863"
+      ],
+      "passed": true
+    },
+    {
+      "query": "Clutch judder when taking off below 1000 RPM.",
+      "expected": "10170614",
+      "actual_document_ids": [
+        "10171739",
+        "10171040",
+        "10170614"
+      ],
+      "passed": true
+    },
+    {
+      "query": "RAV4 Prime climate control does not cool or heat and the battery cooling system reports a refrigerant leak.",
+      "expected": "10230365",
+      "actual_document_ids": [
+        "10230365",
+        "10201402",
+        "10208996",
+        "10224114",
+        "10220189"
+      ],
+      "passed": true
+    },
+    {
+      "query": "The multi-purpose camera can cause cruise control and adaptive cruise control to stop working, sometimes with beeping.",
+      "expected": "10232100",
+      "actual_document_ids": [
+        "10232100",
+        "10211111",
+        "10216879",
+        "10215503",
+        "10200395"
+      ],
+      "passed": true
+    },
+    {
+      "query": "A/C takes a long time to get cold on hot days with no warning lights.",
+      "expected": "NO_MATCH",
+      "actual_document_ids": [],
+      "passed": true
+    }
+  ]
+}

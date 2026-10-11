@@ -1,13 +1,18 @@
 import json
+
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import END, START, StateGraph
 from langgraph.prebuilt import ToolNode
 
-from .state import TriageState
-from .tools import TOOLS
 from ..schemas import ConcernAnalysis, FinalNarrative
 from ..services.llm import get_chat_model
 from ..services.risk import deterministic_risk_override
+from .state import TriageState
+from .tools import TOOLS
+
+AGENT_VERSION = "triage-agent-0.3.0"
+PROMPT_VERSION = "triage-prompts-0.2.0"
+RETRIEVAL_VERSION = "hybrid-retrieval-0.3.0"
 
 
 ANALYZE_PROMPT = """You are assisting an automotive service advisor with intake triage.
@@ -28,7 +33,8 @@ FINAL_PROMPT = """You are drafting a service-advisor triage result from collecte
 Do not diagnose a specific failed part unless the evidence explicitly states it. Do not tell the customer to perform a repair.
 Recommended steps must be inspection/verification steps for a qualified technician.
 The work order should summarize CUSTOMER STATES, RELEVANT HISTORY/EVIDENCE, and REQUESTED INSPECTION.
-If evidence is weak, conflicting, or the risk is safety_review, require human review. Never fabricate recall or bulletin identifiers."""
+If evidence is weak, conflicting, or the risk is safety_review, require human review. Never fabricate recall or bulletin identifiers.
+When evidence is present, mention only source IDs supplied in the evidence. Do not invent citations."""
 
 
 def analyze_concern(state: TriageState) -> dict:
@@ -39,7 +45,11 @@ Mileage: {request['mileage']}
 Customer complaint: {request['customer_complaint']}
 Advisor notes: {request.get('service_advisor_notes', '')}"""
     analysis = llm.invoke([SystemMessage(content=ANALYZE_PROMPT), HumanMessage(content=text)])
-    analysis.risk_level = deterministic_risk_override(request["customer_complaint"], analysis.risk_level)
+    risk_text = " ".join([
+        request["customer_complaint"],
+        request.get("service_advisor_notes", ""),
+    ])
+    analysis.risk_level = deterministic_risk_override(risk_text, analysis.risk_level)
     return {"concern_analysis": analysis.model_dump(), "messages": [HumanMessage(content=text)]}
 
 
@@ -64,13 +74,26 @@ def route_after_agent(state: TriageState) -> str:
 
 
 def _tool_payloads(messages):
-    payloads = {"search_recalls": [], "search_technical_bulletins": [], "get_service_history": []}
+    payloads = {
+        "search_recalls": {"status": "not_called", "items": [], "evidence": []},
+        "search_technical_bulletins": {"status": "not_called", "items": [], "evidence": []},
+        "get_service_history": {"status": "not_called", "items": [], "evidence": []},
+    }
     for message in messages:
         if isinstance(message, ToolMessage) and message.name in payloads:
             try:
-                payloads[message.name] = json.loads(message.content)
-            except Exception:
-                payloads[message.name] = []
+                parsed = json.loads(message.content)
+                # Keep compatibility with the original tool response shape.
+                if isinstance(parsed, list):
+                    parsed = {"status": "ok", "items": parsed, "evidence": []}
+                payloads[message.name] = parsed
+            except Exception as exc:
+                payloads[message.name] = {
+                    "status": "tool_error",
+                    "items": [],
+                    "evidence": [],
+                    "error": str(exc),
+                }
     return payloads
 
 
@@ -78,15 +101,31 @@ def finalize(state: TriageState) -> dict:
     request = state["request"]
     analysis = state["concern_analysis"]
     payloads = _tool_payloads(state.get("messages", []))
-    tools_used = [name for name, values in payloads.items() if values or any(isinstance(m, ToolMessage) and m.name == name for m in state.get("messages", []))]
-    evidence_present = any(payloads.values())
+    tools_used = [
+        name
+        for name, values in payloads.items()
+        if values["status"] != "not_called"
+    ]
+    evidence_present = any(values.get("evidence") for values in payloads.values())
+    tool_errors = [
+        {"tool": name, "error": values.get("error", "unknown tool error")}
+        for name, values in payloads.items()
+        if values.get("status") == "tool_error"
+    ]
+    evidence = [
+        item
+        for values in payloads.values()
+        for item in values.get("evidence", [])
+    ]
 
     evidence_for_llm = {
         "risk_level": analysis["risk_level"],
         "parsed_symptoms": analysis["symptoms"],
-        "recalls": payloads["search_recalls"],
-        "technical_bulletins": payloads["search_technical_bulletins"],
-        "service_history": payloads["get_service_history"],
+        "recalls": payloads["search_recalls"].get("items", []),
+        "technical_bulletins": payloads["search_technical_bulletins"].get("items", []),
+        "service_history": payloads["get_service_history"].get("items", []),
+        "evidence": evidence,
+        "tool_errors": tool_errors,
         "evidence_present": evidence_present,
     }
     llm = get_chat_model().with_structured_output(FinalNarrative)
@@ -95,7 +134,7 @@ def finalize(state: TriageState) -> dict:
         HumanMessage(content=json.dumps({"request": request, "evidence": evidence_for_llm}, ensure_ascii=False)),
     ])
 
-    if analysis["risk_level"] == "safety_review" or not evidence_present:
+    if analysis["risk_level"] == "safety_review" or not evidence_present or tool_errors:
         narrative.human_review_required = True
 
     result = {
@@ -103,9 +142,16 @@ def finalize(state: TriageState) -> dict:
         "parsed_symptoms": analysis["symptoms"],
         "component": analysis["component"],
         "missing_information": analysis["missing_information"],
-        "matched_recalls": payloads["search_recalls"],
-        "matched_tsb": payloads["search_technical_bulletins"],
-        "prior_service_context": payloads["get_service_history"],
+        "matched_recalls": payloads["search_recalls"].get("items", []),
+        "matched_tsb": payloads["search_technical_bulletins"].get("items", []),
+        "prior_service_context": payloads["get_service_history"].get("items", []),
+        "evidence": evidence,
+        "tool_errors": tool_errors,
+        "versions": {
+            "agent": AGENT_VERSION,
+            "prompts": PROMPT_VERSION,
+            "retrieval": RETRIEVAL_VERSION,
+        },
         "recommended_inspection_steps": narrative.recommended_inspection_steps,
         "human_review_required": narrative.human_review_required,
         "evidence_summary": narrative.evidence_summary,

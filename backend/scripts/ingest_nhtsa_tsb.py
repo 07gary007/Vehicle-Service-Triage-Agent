@@ -17,7 +17,6 @@ from app.db import Base, SessionLocal, engine
 from app.models import TSBChunk
 from app.services.llm import get_embeddings
 
-
 # Use NHTSA's current Manufacturer Communications export.
 URLS = [
     "https://static.nhtsa.gov/odi/ffdd/tsbs/MFR_COMMS_RECEIVED_2020-2024.zip",
@@ -300,6 +299,17 @@ def collect_records(
             if not summary:
                 continue
 
+            # The current NHTSA bulk export often contains a concise summary
+            # rather than the complete bulletin body. Prefer a body field when
+            # the source provides one, and preserve the provenance either way.
+            body = get_value(
+                row,
+                "Full Text",
+                "Document Text",
+                "Description",
+                "Details",
+            ) or summary
+
             identity = (
                 document_id
                 or nhtsa_id
@@ -350,6 +360,10 @@ def collect_records(
                         "Type",
                     )[:128],
                     "summary": summary,
+                    "content": body,
+                    "source_url": URLS[0],
+                    "section_title": get_value(row, "Section", "Section Title")[:256],
+                    "page_number": None,
                 }
             )
 
@@ -486,9 +500,7 @@ def main() -> None:
     metadata: list[dict] = []
 
     for doc in docs:
-        for chunk in chunk_text(
-            doc["summary"]
-        ):
+        for chunk in chunk_text(doc["content"]):
             texts.append(chunk)
             metadata.append(doc)
 
@@ -550,6 +562,13 @@ def main() -> None:
                         "communication_type"
                     ],
                     summary=meta["summary"],
+                    search_text=" ".join(
+                        [meta["component"], meta["summary"], text]
+                    ),
+                    source_url=meta["source_url"],
+                    section_title=meta["section_title"],
+                    page_number=meta["page_number"],
+                    ingestion_version="nhtsa-summary-v2",
                 )
             )
 

@@ -6,6 +6,7 @@
     "customer_complaint": "Grinding noise when braking and the ABS light came on yesterday.",
     "service_advisor_notes": "Customer says braking feel may be slightly different.",
     "expected_risk": "safety_review",
+    "expected_human_review": true,
     "expected_tools": ["search_recalls", "search_technical_bulletins", "get_service_history"]
   },
   {
@@ -15,6 +16,7 @@
     "customer_complaint": "The steering wheel shakes when I brake from highway speed.",
     "service_advisor_notes": "",
     "expected_risk": "safety_review",
+    "expected_human_review": true,
     "expected_tools": ["search_recalls", "search_technical_bulletins", "get_service_history"]
   },
   {
@@ -24,6 +26,7 @@
     "customer_complaint": "The center display reboots randomly and Bluetooth disconnects.",
     "service_advisor_notes": "Happened three times this week.",
     "expected_risk": "routine",
+    "expected_human_review": true,
     "expected_tools": ["search_technical_bulletins", "get_service_history"]
   },
   {
@@ -33,6 +36,7 @@
     "customer_complaint": "Temperature gauge went above normal and I smelled something hot after driving.",
     "service_advisor_notes": "Vehicle is parked at the dealership now.",
     "expected_risk": "safety_review",
+    "expected_human_review": true,
     "expected_tools": ["search_recalls", "search_technical_bulletins", "get_service_history"]
   },
   {
@@ -42,6 +46,7 @@
     "customer_complaint": "The air conditioner takes a long time to get cold on hot days.",
     "service_advisor_notes": "No warning lights.",
     "expected_risk": "routine",
+    "expected_human_review": false,
     "expected_tools": ["search_technical_bulletins", "get_service_history"]
   }
 ]

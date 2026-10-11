@@ -73,6 +73,19 @@ function App() {
           <div className="timeline">{result.tools_used.map(t => <div key={t}>✓ {t}</div>)}</div>
 
           <h3>Evidence summary</h3><p>{result.evidence_summary}</p>
+          {result.evidence.length > 0 && <>
+            <h3>Evidence citations <small>{result.evidence.length}</small></h3>
+            <div className="evidence citations">
+              {result.evidence.slice(0, 8).map((item, i) =>
+                <div className="citation" key={`${String(item.source_id)}-${i}`}>
+                  <strong>{String(item.source_id)}</strong>
+                  <span>{String(item.title || item.source_type)}</span>
+                  <p>{String(item.snippet || '')}</p>
+                </div>
+              )}
+            </div>
+          </>}
+          {result.tool_errors.length > 0 && <p className="message">One or more evidence tools failed. Human review is required.</p>}
           <Evidence title="Matched recalls" items={result.matched_recalls} />
           <Evidence title="Manufacturer technical communications" items={result.matched_tsb} />
           <Evidence title="Prior service context" items={result.prior_service_context} />

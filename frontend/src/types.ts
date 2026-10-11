@@ -6,7 +6,7 @@ export type TriageRequest = {
 }
 
 export type TriageResult = {
-  run_id: number
+  run_id: string
   risk_level: 'routine' | 'priority' | 'safety_review'
   parsed_symptoms: string[]
   component: string
@@ -14,6 +14,9 @@ export type TriageResult = {
   matched_recalls: Array<Record<string, string>>
   matched_tsb: Array<Record<string, string | number>>
   prior_service_context: Array<Record<string, string | number>>
+  evidence: Array<Record<string, unknown>>
+  tool_errors: Array<Record<string, string>>
+  versions: Record<string, string>
   recommended_inspection_steps: string[]
   human_review_required: boolean
   evidence_summary: string
